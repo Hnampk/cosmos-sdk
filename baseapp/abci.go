@@ -105,6 +105,12 @@ func (app *BaseApp) InitChain(req abci.RequestInitChain) (res abci.ResponseInitC
 
 // Info implements the ABCI interface.
 func (app *BaseApp) Info(req abci.RequestInfo) abci.ResponseInfo {
+	return app.parent.Info(RequestInfoWrapper{
+		RequestInfo: req,
+		ChainID:     1,
+		ChainType:   ChainType_Cosmos,
+	})
+
 	lastCommitID := app.cms.LastCommitID()
 
 	return abci.ResponseInfo{
@@ -226,6 +232,12 @@ func (app *BaseApp) EndBlock(req abci.RequestEndBlock) (res abci.ResponseEndBloc
 // will contain releveant error information. Regardless of tx execution outcome,
 // the ResponseCheckTx will contain relevant gas execution context.
 func (app *BaseApp) CheckTx(req abci.RequestCheckTx) abci.ResponseCheckTx {
+	return app.parent.CheckTx(RequestCheckTxWrapper{
+		RequestCheckTx: req,
+		ChainID:        1,
+		ChainType:      ChainType_Cosmos,
+	})
+
 	defer telemetry.MeasureSince(time.Now(), "abci", "check_tx")
 
 	var mode runTxMode
