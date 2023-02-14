@@ -46,6 +46,7 @@ type (
 
 // BaseApp reflects the ABCI application implementation.
 type BaseApp struct { // nolint: maligned
+	parent *Application
 	// initialized on creation
 	logger            log.Logger
 	name              string               // application name from abci.Info
@@ -167,6 +168,10 @@ func NewBaseApp(
 
 	app.runTxRecoveryMiddleware = newDefaultRecoveryMiddleware()
 
+	customapp := &Application{
+		BaseApp: app,
+	}
+	app.parent = customapp
 	return app
 }
 

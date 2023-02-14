@@ -86,6 +86,7 @@ func GenerateTx(clientCtx client.Context, txf Factory, msgs ...sdk.Msg) error {
 // given set of messages. It will also simulate gas requirements if necessary.
 // It will return an error upon failure.
 func BroadcastTx(clientCtx client.Context, txf Factory, msgs ...sdk.Msg) error {
+	fmt.Println("BroadcastTx prepareFactory")
 	txf, err := prepareFactory(clientCtx, txf)
 	if err != nil {
 		return err
@@ -105,6 +106,7 @@ func BroadcastTx(clientCtx client.Context, txf Factory, msgs ...sdk.Msg) error {
 		return nil
 	}
 
+	fmt.Println("BroadcastTx BuildUnsignedTx")
 	tx, err := BuildUnsignedTx(txf, msgs...)
 	if err != nil {
 		return err
@@ -127,6 +129,7 @@ func BroadcastTx(clientCtx client.Context, txf Factory, msgs ...sdk.Msg) error {
 		}
 	}
 
+	fmt.Println("BroadcastTx Sign")
 	tx.SetFeeGranter(clientCtx.GetFeeGranterAddress())
 	err = Sign(txf, clientCtx.GetFromName(), tx, true)
 	if err != nil {
@@ -138,6 +141,7 @@ func BroadcastTx(clientCtx client.Context, txf Factory, msgs ...sdk.Msg) error {
 		return err
 	}
 
+	fmt.Println("BroadcastTx clientCtx.BroadcastTx")
 	// broadcast to a Tendermint node
 	res, err := clientCtx.BroadcastTx(txBytes)
 	if err != nil {
@@ -257,7 +261,6 @@ func CalculateGas(
 // the updated fields will be returned.
 func prepareFactory(clientCtx client.Context, txf Factory) (Factory, error) {
 	from := clientCtx.GetFromAddress()
-
 	if err := txf.accountRetriever.EnsureExists(clientCtx, from); err != nil {
 		return txf, err
 	}

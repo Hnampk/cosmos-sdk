@@ -1,6 +1,8 @@
 package keeper
 
 import (
+	"fmt"
+
 	"github.com/tendermint/tendermint/libs/log"
 
 	"github.com/cosmos/cosmos-sdk/codec"
@@ -53,6 +55,9 @@ func (k Keeper) Logger(ctx sdk.Context) log.Logger {
 // get the minter
 func (k Keeper) GetMinter(ctx sdk.Context) (minter types.Minter) {
 	store := ctx.KVStore(k.storeKey)
+	fmt.Printf("store %+v\n", store)
+	fmt.Println("k.storeKey", k.storeKey)
+	fmt.Println("types.MinterKey", types.MinterKey)
 	b := store.Get(types.MinterKey)
 	if b == nil {
 		panic("stored minter should not have been nil")
